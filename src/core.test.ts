@@ -13,7 +13,6 @@ const retainedRelease = getReleaseRetention(
   Releases,
   N
 );
-console.log(retainedRelease);
 
 it("should contain all combinations of Projects and Environments", () => {
   expect(retainedRelease).toHaveProperty("Project-1 - Environment-1");
@@ -77,12 +76,39 @@ it("should contain kept release IDs", () => {
 });
 
 it("should no more than N records", () => {
-  for (const [key, value] of Object.entries(retainedRelease)) {
-    expect(value.length).toBeLessThanOrEqual(N);
+  const retainedRelease1 = getReleaseRetention(
+    Projects,
+    Environments,
+    Deployments,
+    Releases,
+    1
+  );
+  const retainedRelease2 = getReleaseRetention(
+    Projects,
+    Environments,
+    Deployments,
+    Releases,
+    2
+  );
+  const retainedRelease3 = getReleaseRetention(
+    Projects,
+    Environments,
+    Deployments,
+    Releases,
+    3
+  );
+  for (const [key, value] of Object.entries(retainedRelease1)) {
+    expect(value.length).toBeLessThanOrEqual(1);
+  }
+  for (const [key, value] of Object.entries(retainedRelease2)) {
+    expect(value.length).toBeLessThanOrEqual(2);
+  }
+  for (const [key, value] of Object.entries(retainedRelease3)) {
+    expect(value.length).toBeLessThanOrEqual(3);
   }
 });
 
-it.only("should be sorted in most recent deployed order", () => {
+it("should be sorted in most recent deployed order", () => {
   expect(retainedRelease["Project-1 - Environment-1"][0]).toMatchObject({
     ReleaseId: "Release-1",
     DeployedAt: "2000-01-01T10:00:00",
